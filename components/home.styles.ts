@@ -1,0 +1,173 @@
+import { Dimensions, StyleSheet } from 'react-native';
+
+const { width } = Dimensions.get('window');
+
+export const homeStyles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF9F6',
+  },
+  flex: {
+    flex: 1,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#FAF9F6',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#8E8E8E',
+    fontWeight: '500',
+  },
+  topBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 15,
+  },
+  scrollContent: {
+    paddingBottom: 40,
+  },
+  profileCard: {
+    backgroundColor: '#FFB788',
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+    borderBottomLeftRadius: 40,
+    borderBottomRightRadius: 40,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  profileInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatarContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    borderWidth: 2,
+    borderColor: 'white',
+    overflow: 'hidden',
+    marginRight: 15,
+  },
+  avatar: {
+    width: '100%',
+    height: '100%',
+  },
+  profileName: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+  },
+  profileTitle: {
+    fontSize: 14,
+    color: 'rgba(0,0,0,0.6)',
+    marginTop: 2,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginTop: 25,
+    marginBottom: 15,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#1A1A1A',
+    paddingHorizontal: 20,
+  },
+  calendarFab: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    backgroundColor: '#2E9D9D',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    marginRight: 20,
+  },
+  tasksContainer: {
+    paddingHorizontal: 20,
+  },
+  taskItem: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    padding: 15,
+    borderRadius: 20,
+    alignItems: 'center',
+    marginBottom: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  taskIconContainer: {
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 15,
+  },
+  taskTextContainer: {
+    flex: 1,
+  },
+  taskLabel: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#1A1A1A',
+  },
+  taskSubtitle: {
+    fontSize: 12,
+    color: '#8E8E8E',
+    marginTop: 2,
+  },
+  projectsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+  },
+  projectCard: {
+    width: width * 0.43,
+    padding: 20,
+    borderRadius: 30,
+    alignItems: 'center',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  projectInfo: {
+    marginTop: 15,
+    alignItems: 'center',
+  },
+  projectCardTitle: {
+    color: 'white',
+    fontSize: 15,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  projectCardSubtitle: {
+    color: 'rgba(255,255,255,0.8)',
+    fontSize: 11,
+    marginTop: 4,
+    textAlign: 'center',
+  },
+  cardLoader: {
+    marginTop: 10,
+  },
+});
