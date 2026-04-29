@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { homeStyles as styles } from '../components/home.styles';
+import { homeStyles as styles } from '../stylesheets/home.styles';
 
 interface TopBarProps {
   handlePress: (id: string, title: string) => void;

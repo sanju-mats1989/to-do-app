@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import { loginStyles as styles } from '../components/login.styles';
+import { loginStyles as styles } from '../stylesheets/login.styles';
 
 import { AuthContext } from '../context/AuthContext';
 

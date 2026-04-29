@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { homeStyles as styles } from './home.styles';
+import React from 'react';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
+import { homeStyles as styles } from '../stylesheets/home.styles';
 
 const MyTasks = ({ btnLoading, handlePress }) => (
   <View style={styles.tasksContainer}>

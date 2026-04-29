@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActiveProjects from '../../components/ActiveProjects';
-import { homeStyles as styles } from '../../components/home.styles';
+import { homeStyles as styles } from '../../stylesheets/home.styles';
 import MyTasks from '../../components/MyTasks';
 import { AuthContext } from '../../context/AuthContext';
 import TopBar from '../../components/TopBar';
