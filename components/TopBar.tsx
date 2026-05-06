@@ -1,6 +1,9 @@
 import { Feather } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useContext, useState } from 'react';
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { AuthContext } from '../context/AuthContext';
 import { homeStyles as styles } from '../stylesheets/home.styles';
 
 interface TopBarProps {
@@ -15,14 +18,38 @@ const menuItems = [
   { id: 'logout', label: 'Logout' },
 ];
 
+const menuIcons: Record<string, keyof typeof Feather.glyphMap> = {
+  home: 'home',
+  mytasks: 'check-square',
+  createtask: 'plus-circle',
+  profile: 'user',
+  logout: 'log-out',
+};
+
 const TopBar: React.FC<TopBarProps> = ({ handlePress }) => {
   const [menuVisible, setMenuVisible] = useState(false);
+  const auth = useContext(AuthContext);
+  const router = useRouter();
 
   const onMenuPress = () => setMenuVisible(true);
   const onClose = () => setMenuVisible(false);
-  const onMenuItemPress = (id: string, label: string) => {
+  const onMenuItemPress = async (id: string, label: string) => {
     setMenuVisible(false);
-    handlePress(id, label);
+    if (id === 'logout') {
+      // Logout logic: remove token, clear context, redirect
+      try {
+        await AsyncStorage.removeItem('token');
+        await AsyncStorage.removeItem('user');
+        auth.setFirstName('');
+        auth.setLastName('');
+        auth.setEmail('');
+        router.replace('/');
+      } catch (e) {
+        console.log('Logout error:', e);
+      }
+    } else {
+      handlePress(id, label);
+    }
   };
 
   return (
@@ -43,14 +70,23 @@ const TopBar: React.FC<TopBarProps> = ({ handlePress }) => {
       >
         <TouchableOpacity style={modalStyles.overlay} activeOpacity={1} onPress={onClose}>
           <View style={modalStyles.menuContainer}>
-            {menuItems.map(item => (
-              <TouchableOpacity
-                key={item.id}
-                style={modalStyles.menuItem}
-                onPress={() => onMenuItemPress(item.id, item.label)}
-              >
-                <Text style={modalStyles.menuText}>{item.label}</Text>
-              </TouchableOpacity>
+            <Text style={modalStyles.menuTitle}>Quick Menu</Text>
+            {menuItems.map((item, index) => (
+              <View key={item.id}>
+                <TouchableOpacity
+                  style={modalStyles.menuItem}
+                  onPress={() => onMenuItemPress(item.id, item.label)}
+                >
+                  <View style={modalStyles.menuLeftSection}>
+                    <View style={modalStyles.menuIconWrap}>
+                      <Feather name={menuIcons[item.id]} size={16} color="#2C2C2C" />
+                    </View>
+                    <Text style={modalStyles.menuText}>{item.label}</Text>
+                  </View>
+                  <Feather name="chevron-right" size={16} color="#A2A2A2" />
+                </TouchableOpacity>
+                {index < menuItems.length - 1 ? <View style={modalStyles.menuDivider} /> : null}
+              </View>
             ))}
           </View>
         </TouchableOpacity>
@@ -62,30 +98,65 @@ const TopBar: React.FC<TopBarProps> = ({ handlePress }) => {
 const modalStyles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'flex-start',
     alignItems: 'flex-start',
   },
   menuContainer: {
-    marginTop: 50,
-    marginLeft: 10,
+    marginTop: 56,
+    marginLeft: 16,
     backgroundColor: 'white',
-    borderRadius: 8,
-    paddingVertical: 8,
-    minWidth: 160,
+    borderRadius: 16,
+    paddingVertical: 10,
+    minWidth: 240,
+    maxWidth: 300,
+    width: '70%',
     elevation: 5,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
+    shadowOpacity: 0.22,
+    shadowRadius: 8,
+  },
+  menuTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#8D8D8D',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   menuItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     paddingVertical: 12,
-    paddingHorizontal: 20,
+    paddingHorizontal: 14,
+    marginHorizontal: 8,
+    borderRadius: 12,
+  },
+  menuLeftSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  menuIconWrap: {
+    width: 28,
+    height: 28,
+    borderRadius: 8,
+    backgroundColor: '#F4F4F4',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
   },
   menuText: {
-    fontSize: 16,
-    color: '#333',
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#2C2C2C',
+  },
+  menuDivider: {
+    height: 1,
+    backgroundColor: '#F0F0F0',
+    marginHorizontal: 16,
   },
 });
 

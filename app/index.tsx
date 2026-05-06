@@ -1,21 +1,23 @@
 import { Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 import { useRouter } from 'expo-router';
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
-    ActivityIndicator,
-    Animated,
-    KeyboardAvoidingView,
-    Platform,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  ActivityIndicator,
+  Animated,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { loginStyles as styles } from '../stylesheets/login.styles';
-
 import { AuthContext } from '../context/AuthContext';
+import API from "../services/api";
+import { loginStyles as styles } from '../stylesheets/login.styles';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -47,16 +49,56 @@ const LoginScreen = () => {
   }, []);
 
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setEmailError('');
     setPasswordError('');
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      // Save email to context (shared globally)
-      auth.setEmail(email);
+    if (!email) {
+      setEmailError("Email is required");
+      return;
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      return;
+    }
+    try {
+      setIsLoading(true);
+
+      const res = await API.post("/auth/login", {
+        email,
+        password,
+      });
+
+      const token = res.data.access_token;
+      const user = res.data.user;
+
+      // ✅ store token
+      await AsyncStorage.setItem("token", token);
+      await AsyncStorage.setItem("user", JSON.stringify(user || {}));
+
+      auth.setFirstName(user?.firstName || '');
+      auth.setLastName(user?.lastName || '');
+      auth.setEmail(user?.email || email);
+
+      // ✅ navigate
       router.replace('/(tabs)');
-    }, 1000);
+
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+
+        if (err.response?.data?.message) {
+          alert(err.response.data.message);
+        } else if (err.message === "Network Error") {
+          alert("Cannot reach server. Check API URL and backend connection.");
+        } else {
+          alert("Login failed. Please try again.");
+        }
+      } else {
+        alert("Unexpected error occurred.");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
     return (

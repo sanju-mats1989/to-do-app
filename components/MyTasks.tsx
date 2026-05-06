@@ -3,7 +3,22 @@ import React from 'react';
 import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { homeStyles as styles } from '../stylesheets/home.styles';
 
-const MyTasks = ({ btnLoading, handlePress }) => (
+type TaskStatus = {
+  total: number;
+  'to-do': number;
+  'in-progress': number;
+  done: number;
+  'on-hold': number;
+  cancelled: number;
+};
+
+type MyTasksProps = {
+  btnLoading: string | null;
+  handlePress: (id: string, title: string) => void;
+  taskStatus: TaskStatus;
+};
+
+const MyTasks = ({ btnLoading, handlePress, taskStatus }: MyTasksProps) => (
   <View style={styles.tasksContainer}>
     <TouchableOpacity
       style={styles.taskItem}
@@ -14,7 +29,7 @@ const MyTasks = ({ btnLoading, handlePress }) => (
       </View>
       <View style={styles.taskTextContainer}>
         <Text style={styles.taskLabel}>To Do</Text>
-        <Text style={styles.taskSubtitle}>5 tasks now. 1 started</Text>
+        <Text style={styles.taskSubtitle}>{taskStatus['to-do']} tasks</Text>
       </View>
       {btnLoading === 'todo' && <ActivityIndicator size="small" color="#FF5252" />}
     </TouchableOpacity>
@@ -28,7 +43,7 @@ const MyTasks = ({ btnLoading, handlePress }) => (
       </View>
       <View style={styles.taskTextContainer}>
         <Text style={styles.taskLabel}>In Progress</Text>
-        <Text style={styles.taskSubtitle}>1 tasks now. 1 started</Text>
+        <Text style={styles.taskSubtitle}>{taskStatus['in-progress']} tasks</Text>
       </View>
       {btnLoading === 'inprogress' && <ActivityIndicator size="small" color="#FFA726" />}
     </TouchableOpacity>
@@ -42,7 +57,7 @@ const MyTasks = ({ btnLoading, handlePress }) => (
       </View>
       <View style={styles.taskTextContainer}>
         <Text style={styles.taskLabel}>Done</Text>
-        <Text style={styles.taskSubtitle}>18 tasks now. 13 started</Text>
+        <Text style={styles.taskSubtitle}>{taskStatus.done} tasks </Text>
       </View>
       {btnLoading === 'done' && <ActivityIndicator size="small" color="#4285F4" />}
     </TouchableOpacity>

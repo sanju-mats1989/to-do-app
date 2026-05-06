@@ -11,10 +11,11 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ActiveProjects from '../../components/ActiveProjects';
-import { homeStyles as styles } from '../../stylesheets/home.styles';
 import MyTasks from '../../components/MyTasks';
-import { AuthContext } from '../../context/AuthContext';
 import TopBar from '../../components/TopBar';
+import { AuthContext } from '../../context/AuthContext';
+import API from '../../services/api';
+import { homeStyles as styles } from '../../stylesheets/home.styles';
 
 // Custom Circular Progress Component (since we are using vanilla React Native)
 type CircularProgressProps = {
@@ -60,13 +61,49 @@ const CircularProgress = ({ progress, size, strokeWidth, color }: CircularProgre
   );
 };
 
+const capitalizeFirstLetter = (value: string) => {
+  if (!value) {
+    return '';
+  }
+
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+};
+
 const Home = () => {
   const [loading, setLoading] = useState(true);
-  const [btnLoading, setBtnLoading] = useState(null);
+  const [btnLoading, setBtnLoading] = useState<string | null>(null);
+  const [taskStatus, setTaskStatus] = useState({
+    total: 0,
+    'to-do': 0,
+    'in-progress': 0,
+    done: 0,
+    'on-hold': 0,
+    cancelled: 0,
+  });
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const { email } = useContext(AuthContext);
+  const { firstName, lastName, email } = useContext(AuthContext);
+  const fullName = `${capitalizeFirstLetter(firstName)} ${capitalizeFirstLetter(lastName)}`.trim();
+  const displayName = fullName || email || 'User';
 
   useEffect(() => {
+    const fetchTaskStatus = async () => {
+      try {
+        const res = await API.get('/tasks/status');
+        setTaskStatus({
+          total: res.data?.total ?? 0,
+          'to-do': res.data?.['to-do'] ?? 0,
+          'in-progress': res.data?.['in-progress'] ?? 0,
+          done: res.data?.done ?? 0,
+          'on-hold': res.data?.['on-hold'] ?? 0,
+          cancelled: res.data?.cancelled ?? 0,
+        });
+      } catch (err) {
+        console.log('TASK STATUS ERROR:', err);
+      }
+    };
+
+    fetchTaskStatus();
+
     // Initial loading state
     setTimeout(() => {
       setLoading(false);
@@ -111,8 +148,8 @@ const Home = () => {
                 />
               </View>
               <View>
-                <Text style={styles.profileName}>{email || 'User'}</Text>
-                <Text style={styles.profileTitle}>App Developer</Text>
+                <Text style={styles.profileName}>{displayName}</Text>
+                {/* <Text style={styles.profileTitle}>App Developer</Text> */}
               </View>
             </View>
           </View>
@@ -128,7 +165,11 @@ const Home = () => {
               <Feather name="calendar" size={20} color="white" />
             </TouchableOpacity>
           </View>
-          <MyTasks btnLoading={btnLoading} handlePress={handlePress} />
+          <MyTasks
+            btnLoading={btnLoading}
+            handlePress={handlePress}
+            taskStatus={taskStatus}
+          />
 
           {/* Active Projects Section */}
           <Text style={[styles.sectionTitle, { marginTop: 20, marginBottom: 15 }]}>Active Projects</Text>
